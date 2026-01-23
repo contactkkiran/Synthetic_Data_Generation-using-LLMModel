@@ -1,174 +1,246 @@
+# Synthetic Data Generation using LLM Model
 
-<p align="center">
-  <b>Author:</b><br>
-  <b>Kiran Kanumuri</b><br>
-  Certified Playwright SME & AI Automation Architect
-</p>
+A TypeScript-based project that generates realistic synthetic user profiles by combining data from the Faker library with AI-generated content from a large language model (LLM).
 
+## Overview
 
+This project demonstrates how to create synthetic user data by leveraging two complementary approaches:
 
+1. **Faker-based Generation**: Uses the `@faker-js/faker` library to generate structurally valid user information (names, emails, addresses, etc.)
+2. **LLM-based Enrichment**: Augments the generated data with AI-generated biographical information and interests using Hugging Face's GPT-2 model via API
 
----
-# 📘 Synthetic Data Generation – Basics (TypeScript + Faker + Fetch)
+## Features
 
-This document explains the **fundamentals of synthetic data generation** for automated testing.  
-It covers what synthetic data is, why it is needed, the tools required, and how to generate
-**dynamic (non-hardcoded)** data for **API** and **GUI** test automation.
+- **Synthetic User Profiles**: Generate realistic fake user data with complete personal information
+- **Dual Data Source**: Combines deterministic Faker data with LLM-generated content
+- **Batch Generation**: Support for generating single or multiple synthetic users
+- **Type-Safe**: Built with TypeScript for better development experience and error catching
+- **Modular Architecture**: Separate factories for different data generation strategies
 
-This is the foundation for building advanced Data Factories later.
+## Project Structure
 
----
+```
+src/
+├── index.ts                      # Main entry point and demo
+├── syntheticUserFactory.ts       # Faker-based user generation
+├── syntheticLLMFactory.ts        # LLM-based content generation
+├── combinedUserFactory.ts        # Combined generation strategy
+├── userApiDemo.js               # API demonstration
+├── index.js                     # Compiled entry point
+├── *.js                         # Compiled JavaScript files
+```
 
-## 🚀 What Is Synthetic Data?
+## Installation
 
-Synthetic data is **fake but realistic test data** generated automatically
-instead of hardcoding values like:
+1. Clone the repository:
 
-- “Kiran”
-- “test123”
-- “demo@gmail.com”
-- “9999999999”
+```bash
+git clone <repository-url>
+cd Synthetic_Data_Generation-using-LLMModel
+```
 
-The goal is to generate **unique, valid, realistic** test data every time tests run.
+2. Install dependencies:
 
----
+```bash
+npm install
+```
 
-## 🎯 Why Use Synthetic Data?
+## Configuration
 
-| Hardcoded Test Data ❌ | Synthetic Data ✔ |
-|------------------------|------------------|
-| Repeated values        | Fresh values every run |
-| Frequent conflicts     | Unique emails/usernames |
-| Low coverage           | High variety of cases |
-| Manual updates         | Auto-generated |
-| Not production-like    | Realistic names, phones, addresses |
-| Poor scalability       | Tens, hundreds, or thousands of records |
+### Environment Variables
 
-Synthetic data is safer, cleaner, and far more scalable.
+Create a `.env` file in the project root with the following:
 
----
+```
+HF_API_KEY=your_huggingface_api_key_here
+```
 
-## 🧩 What You Need for Synthetic Data Generation
+**Getting an API Key:**
 
-To generate synthetic data in a TypeScript project, you need:
+1. Sign up at [Hugging Face](https://huggingface.co/)
+2. Navigate to your account settings and generate a new API token
+3. Add it to your `.env` file
 
-### 1️⃣ **A Data Generation Library**
-- We use **@faker-js/faker**
-- It generates:
-  - Names  
-  - Emails  
-  - Phone numbers  
-  - Addresses  
-  - Usernames  
-  - Passwords  
-  - Dates  
-  - IDs  
-  - Domain-specific fields  
+## Usage
 
-### 2️⃣ **A Runtime Environment**
-- Node.js + TypeScript + ts-node
+### Generate a Single Combined User
 
-### 3️⃣ **A Dynamic Data Builder Function**
-A dedicated function that returns JSON with **fresh dynamic values** every time.
+```typescript
+import { makeCombinedUser } from "./src/combinedUserFactory";
 
----
+const user = await makeCombinedUser();
+console.log(user);
+```
 
-## 🔄 Steps to Generate Synthetic Data (Conceptual)
+### Generate Multiple Users
 
-### **STEP 1 — Install Faker**
-Add a data generator to your project.
+```typescript
+import { makeCombinedUsers } from "./src/combinedUserFactory";
 
-### **STEP 2 — Create a Data Generator Function**
-Build a function that returns a JSON object with dynamic values using Faker fields
-(names, emails, addresses, passwords, etc.).
+const users = await makeCombinedUsers(10);
+console.log(users);
+```
 
-### **STEP 3 — Use This JSON in Your Tests**
-You now have dynamic test data that can be used for:
+### Generate Faker-Only Users
 
-#### ➤ API Tests  
-Send the generated JSON as:
-- POST request body  
-- PUT request body  
-- PATCH request body  
+```typescript
+import { makeUser, makeUsers } from "./src/syntheticUserFactory";
 
-#### ➤ GUI (UI) Tests  
-Fill input fields using:
-- user.firstName  
-- user.email  
-- user.password  
-- user.address  
+const user = makeUser();
+const users = makeUsers(5);
+```
 
-### **STEP 4 — Optional: Save Generated Data**
-For multi-step test flows, save the synthetic JSON to:
-- `.json` files  
-- environment variables  
-- in-memory storage  
+### Generate LLM-Only Users
 
-### **STEP 5 — Extend as Needed**
-You can grow the synthetic model to include:
+```typescript
+import { makeLLMUser } from "./src/syntheticLLMFactory";
 
-- Orders  
-- Products  
-- Payments  
-- Transactions  
-- Policies  
-- Bank accounts  
-- Invoices  
-- Nested objects or arrays  
+const user = await makeLLMUser();
+console.log(user);
+```
 
-This becomes a **Data Factory** for the entire project.
+## Running the Project
 
----
+### Development (TypeScript)
 
-## 🧪 How Synthetic Data Helps in Testing
+```bash
+npm run dev
+```
 
-### ✔ Clean and reusable tests  
-### ✔ Avoids duplicates (unique emails/usernames)  
-### ✔ Works for both API and GUI  
-### ✔ Enables negative test generation  
-### ✔ Makes CI/CD execution stable  
-### ✔ 50+ scenarios possible with dynamic inputs  
+### Build
 
----
+Compile TypeScript to JavaScript:
 
-## 📝 Summary
+```bash
+npm run build
+```
 
-Synthetic data removes all hardcoded values from your tests and replaces them with **realistic, dynamic JSON** generated at runtime.
+### Run Compiled Code
 
-With TypeScript + Faker + Fetch:
+```bash
+npm start
+```
 
-- You generate fresh JSON data  
-- You use that JSON in REST API calls  
-- You reuse the same JSON for UI test input  
-- You achieve stable, scalable, production-like automation  
+## Generated Data Structure
 
-This README covers the **basic foundation**.  
-In the future, this can be extended into a complete **Test Data Factory** for your project.
+### User Profile
 
-Faker Installation & Usage with TypeScript
+```json
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "fullName": "John Doe",
+  "email": "john.doe@example.com",
+  "phone": "+1-555-0123",
+  "username": "johndoe42",
+  "password": "SecurePass123!",
+  "dateOfBirth": "1985-03-15T00:00:00.000Z",
+  "address": {
+    "street": "123 Main St",
+    "city": "New York",
+    "state": "NY",
+    "zip": "10001",
+    "country": "United States"
+  },
+  "bio": "Software engineer passionate about technology",
+  "interests": ["coding", "machine learning", "open source"]
+}
+```
 
-This guide explains how to install and use Faker with TypeScript step by step.
-Faker helps generate synthetic, dynamic, and realistic test data for GUI and API automation.
+## API Endpoints
 
-⸻
+The project can integrate with external APIs:
 
-Prerequisites
+- **Hugging Face API**: Used for LLM-based content generation
+  - Endpoint: `https://api-inference.huggingface.co/models/gpt2`
+  - Authentication: Bearer token via `HF_API_KEY`
 
-Ensure the following are installed on your system:
-	•	Node.js (LTS)
-	•	npm
+## Dependencies
 
-Faker Installation & Usage with TypeScript
+### Main Dependencies
 
-This guide explains how to install and use Faker with TypeScript step by step.
-Faker helps generate synthetic, dynamic, and realistic test data for GUI and API automation.
+- **@faker-js/faker**: ^8.0.0 - Generate realistic fake data
+- **node-fetch**: ^2.0.0 or ^3.0.0 - HTTP client for API calls
+- **dotenv**: ^16.0.0 - Environment variable management
 
-⸻
+### Development Dependencies
 
+- **TypeScript**: Language with static typing
+- **@types/node**: Type definitions for Node.js
 
+## Architecture
 
+### Factory Pattern
 
+The project implements the Factory pattern for flexible data generation:
 
-Verify installation:
----
-# Synthetic_Data_Generation-using-LLMModel
+1. **SyntheticUserFactory**: Base factory producing structured user data
+2. **SyntheticLLMFactory**: Factory for LLM-generated content
+3. **CombinedUserFactory**: Composite factory merging both strategies
+
+### Data Flow
+
+```
+CombinedUserFactory
+├── makeCombinedUser()
+│   ├── SyntheticUserFactory.makeUser() → Faker data
+│   └── SyntheticLLMFactory.makeLLMUser() → LLM data
+│       └── Merge results
+```
+
+## Use Cases
+
+- **Testing**: Generate realistic test data for applications
+- **Machine Learning**: Create synthetic datasets for training
+- **Demo Applications**: Populate applications with realistic sample data
+- **Privacy**: Generate compliant test data without real user information
+- **API Testing**: Load testing with diverse, realistic user profiles
+
+## Limitations
+
+- **LLM API**: Requires internet connection and valid Hugging Face API key
+- **Rate Limiting**: Subject to Hugging Face API rate limits
+- **Cost**: API calls may incur charges based on Hugging Face pricing
+- **Variability**: LLM output may occasionally fail JSON parsing
+
+## Future Enhancements
+
+- [ ] Add support for additional LLM providers (OpenAI, Anthropic, etc.)
+- [ ] Implement caching for LLM responses
+- [ ] Add database integration for storing generated data
+- [ ] Create CLI tool for easy batch generation
+- [ ] Add validation and constraints for generated data
+- [ ] Support for additional data types (products, organizations, etc.)
+
+## Troubleshooting
+
+### "HF_API_KEY not found"
+
+- Ensure `.env` file exists in the project root
+- Verify the API key is valid on Hugging Face
+
+### "Failed to parse JSON from LLM"
+
+- This is normal occasionally; the project handles it gracefully
+- LLM output may not always be valid JSON
+
+### API Rate Limit Errors
+
+- Wait a few moments before retrying
+- Consider implementing exponential backoff retry logic
+
+## License
+
+[Add your license information here]
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Author
+
+Kiran Kumar
+
+## Support
+
+For issues or questions, please open an issue on the repository or contact the author.
